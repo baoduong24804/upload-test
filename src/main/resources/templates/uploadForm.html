@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Upload và Load Ảnh</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        width: 80%;
+        margin: auto;
+        text-align: center;
+    }
+
+    #imageContainer {
+        margin-top: 20px;
+    }
+
+    img {
+        width: 200px;
+        margin: 10px;
+    }
+
+    ul {
+        list-style-type: none;
+        /* Bỏ dấu chấm ở trước danh sách */
+        padding: 0;
+        /* Bỏ padding mặc định */
+    }
+
+    li {
+        padding: 10px;
+        /* Khoảng cách bên trong thẻ li */
+        margin: 5px 0;
+        /* Khoảng cách giữa các thẻ li */
+        background-color: #f0f0f0;
+        /* Màu nền mặc định */
+        transition: background-color 0.3s;
+        /* Hiệu ứng chuyển đổi */
+        cursor: pointer;
+    }
+
+    li:hover {
+        background-color: #b0e0e6;
+        /* Màu nền khi hover */
+    }
+</style>
+
+<body>
+    <div class="container">
+        <h1>Upload Ảnh</h1>
+        <input type="file" id="fileInput">
+        <button id="uploadButton">Upload</button>
+
+        <h2>Ảnh Đã Tải Lên</h2>
+        <img id="imgid" src="" alt="">
+
+
+        <h1>Danh sách Ảnh đã Upload</h1>
+        <button id="btn">Tải danh sách ảnh</button>
+        <ul id="imageList"></ul>
+
+    </div>
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', uploadImage);
+        document.getElementById('btn').addEventListener('click', getImages);
+
+
+        async function getImages() {
+            try {
+                const response = await fetch('https://uploadv2.onrender.com/images');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const images = await response.json(); // Chuyển đổi phản hồi thành JSON
+
+                // Hiển thị danh sách ảnh
+                const imageList = document.getElementById('imageList');
+                imageList.innerHTML = ''; // Xóa danh sách cũ
+
+                images.forEach(image => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('item');
+                    // Gắn sự kiện click vào thẻ li
+                    listItem.addEventListener('click', function () {
+                        const text = this.textContent; // Lấy nội dung văn bản của thẻ li
+                        loadImages(text);
+                        // Bạn có thể thực hiện các hành động khác tại đây
+                    });
+                    listItem.textContent = image; // Giả sử mỗi phần tử trong mảng là tên file
+                    imageList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Có lỗi xảy ra:', error);
+            }
+
+        }
+
+        async function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Vui lòng chọn một tệp.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('https://uploadv2.onrender.com/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+
+
+
+                console.log(response.data);
+
+                loadImages(file.name);
+
+                //loadImages(); // Tải lại hình ảnh sau khi upload
+            } catch (error) {
+                console.error('Lỗi khi upload ảnh:', error);
+            }
+        }
+
+        async function loadImages(name) {
+            const url = 'https://uploadv2.onrender.com/tybao/';
+            const img = document.getElementById('imgid');
+            img.src = url + name;
+
+        }
+
+
+
+
+
+        // Tải ảnh khi trang được tải
+
+
+    </script>
+</body>
+
+</html>

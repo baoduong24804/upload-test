@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Display Image By Filename</title>
+</head>
+<body>
+
+<h2>Display Image By Filename</h2>
+
+<!-- Form nhập tên ảnh -->
+<form method="GET" action="/image-by-path">
+    <label for="filename">Enter Image Filename:</label>
+    <input type="text" id="filename" name="filename" placeholder="image.png" required>
+    <input type="submit" value="Get Image">
+</form>
+
+<!-- Hiển thị ảnh với tên đã nhập -->
+<img th:src="@{/getimage(filename='soft-drink.png')}" alt="Image" width="300"/>
+
+</body>
+</html>
